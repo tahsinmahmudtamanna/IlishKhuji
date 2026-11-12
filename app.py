@@ -6,11 +6,12 @@ import pandas as pd
 import streamlit as st
 from streamlit_folium import st_folium
 
-# 1. PAGE SETUP
+# 1. PAGE SETUP (Sidebar starts collapsed on mobile so map & banner show immediately)
 st.set_page_config(
     page_title="IlishKhuji | ইলিশখুঁজি",
     page_icon="🌿",
     layout="wide",
+    initial_sidebar_state="collapsed",
 )
 
 
@@ -38,18 +39,16 @@ chl_threshold = st.sidebar.slider(
 )
 
 
-# 3. BANGLADESH HILSA BAN PERIOD CHECKER (Checked early so page theme reacts!)
+# 3. BANGLADESH HILSA BAN PERIOD CHECKER
 def check_ban_status(check_date):
     m, d = check_date.month, check_date.day
-    # 22-day Mother Hilsa Spawning Ban (Oct 8 - Oct 29)
     if m == 10 and (8 <= d <= 29):
         return (
             True,
             "🚫 NATIONWIDE BAN ACTIVE: 22-Day Mother Hilsa Spawning Protection (Oct 8–29). Fishing, transport & sale strictly prohibited!"
             if lang == "English"
-            else "🚫 দেশব্যাপী নিষেধাজ্ঞা চলমান: মা ইলিশ সংরক্ষণে ২২ দিনের অবরোধ (৮–২৯ অক্টোবর)। মাছ ধরা ও বিক্রি সম্পূর্ণ নিষিদ্ধ!",
+            else "🚫 দেশব্যাপী নিষেধাজ্ঞা চলমান: মা ইলিশ সংরক্ষণে ২২ দিনের অবরোধ (৮–২৯ অক্টোবর)। মাছ ধরা ও বিক্রি সম্পূর্ণ নিষদ্ধ!",
         )
-    # 58-day Bay of Bengal Marine Fishing Ban (Apr 15 - Jun 11)
     if (m == 4 and d >= 15) or (m == 5) or (m == 6 and d <= 11):
         return (
             True,
@@ -57,7 +56,6 @@ def check_ban_status(check_date):
             if lang == "English"
             else "🚫 সামুদ্রিক নিষেধাজ্ঞা চলমান: বঙ্গোপসাগরে ৫৮ দিনের মাছ ধরা বন্ধ (১৫ এপ্রিল–১১ জুন)।",
         )
-    # Jatka Conservation Period (Mar 1 - Apr 30 in river sanctuaries)
     if m in [3, 4]:
         return (
             False,
@@ -75,7 +73,6 @@ is_banned, ban_message = check_ban_status(selected_date)
 
 # 4. DYNAMIC THEME & TRANSLUCENT LEAF + FISH BACKGROUND PATTERN
 if is_banned:
-    # Full-page Red Alert Mode during Ban Period
     page_bg_color = "#ffe5e8"
     sidebar_bg_color = "#ffccd5"
     pattern_stroke = "%23d90429"
@@ -84,7 +81,6 @@ if is_banned:
     card_bg = "rgba(255, 240, 243, 0.92)"
     text_primary = "#590d22"
 else:
-    # Soft Light Green Page with Translucent Leaf & Fish Prints + Distinct Sidebar
     page_bg_color = "#f1faee"
     sidebar_bg_color = "#d8f3dc"
     pattern_stroke = "%232d6a4f"
@@ -93,17 +89,12 @@ else:
     card_bg = "rgba(255, 255, 255, 0.88)"
     text_primary = "#1b4332"
 
-# Repeating translucent SVG tile with small leaves & fish
 svg_pattern = (
     f"data:image/svg+xml,%3Csvg width='140' height='140' viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E"
     f"%3Cg fill='none' stroke='{pattern_stroke}' stroke-width='1.4' stroke-opacity='0.11'%3E"
-    # Small Leaf 1
     f"%3Cpath d='M25 35 Q40 15 55 35 Q40 55 25 35 Z'/%3E%3Cline x1='25' y1='35' x2='55' y2='35'/%3E"
-    # Small Fish 1
     f"%3Cpath d='M85 40 Q102 27 118 40 Q102 53 85 40 Z'/%3E%3Cpolygon points='118,40 128,33 128,47'/%3E%3Ccircle cx='92' cy='39' r='1'/%3E"
-    # Small Fish 2
     f"%3Cpath d='M20 100 Q37 87 53 100 Q37 113 20 100 Z'/%3E%3Cpolygon points='53,100 63,93 63,107'/%3E%3Ccircle cx='27' cy='99' r='1'/%3E"
-    # Small Leaf 2
     f"%3Cpath d='M88 105 Q103 85 118 105 Q103 125 88 105 Z'/%3E%3Cline x1='88' y1='105' x2='118' y2='105'/%3E"
     f"%3C/g%3E%3C/svg%3E"
 )
@@ -111,7 +102,6 @@ svg_pattern = (
 st.markdown(
     f"""
     <style>
-    /* Main scrolling area with soft green/red color + translucent leaf & fish pattern */
     [data-testid="stAppViewContainer"] {{
         background-color: {page_bg_color};
         background-image: url("{svg_pattern}");
@@ -120,12 +110,10 @@ st.markdown(
     [data-testid="stHeader"] {{
         background-color: rgba(0, 0, 0, 0);
     }}
-    /* Distinct Sidebar Background */
     [data-testid="stSidebar"] {{
         background-color: {sidebar_bg_color};
         border-right: 2px solid {card_border}33;
     }}
-    /* Hero Banner */
     .hero-banner {{
         background: {banner_gradient};
         padding: 28px 36px;
@@ -167,19 +155,37 @@ st.markdown(
         background: rgba(255, 255, 255, 0.2);
         padding: 5px 14px;
         border-radius: 20px;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         font-weight: 700;
         margin-bottom: 10px;
         letter-spacing: 0.6px;
         color: #ffffff;
     }}
-    /* 3x Larger Hilsa Image */
     .hilsa-logo {{
         max-height: 330px;
         max-width: 420px;
         width: auto;
         object-fit: contain;
         filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.32));
+    }}
+    /* Mobile Phone Responsiveness */
+    @media (max-width: 768px) {{
+        .hero-banner {{
+            flex-direction: column;
+            text-align: center;
+            padding: 20px 18px;
+        }}
+        .hero-text h1 {{
+            font-size: 1.9rem;
+        }}
+        .hero-motto {{
+            font-size: 1.05rem;
+        }}
+        .hilsa-logo {{
+            max-height: 170px;
+            max-width: 85%;
+            margin-top: 8px;
+        }}
     }}
     .legend-box {{
         background-color: {card_bg};
@@ -196,7 +202,7 @@ st.markdown(
         border-top: 5px solid {card_border};
         border-radius: 14px;
         padding: 20px 22px;
-        height: 100%;
+        margin-bottom: 14px;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
         color: {text_primary};
     }}
@@ -206,17 +212,13 @@ st.markdown(
         font-weight: 700;
     }}
     .custom-footer {{
-        margin-top: 40px;
+        margin-top: 32px;
         background: {banner_gradient};
         color: #ffffff;
-        padding: 24px 30px;
+        padding: 22px 24px;
         border-radius: 16px;
         text-align: center;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-    }}
-    .custom-footer a {{
-        color: #d8f3dc;
-        text-decoration: underline;
     }}
     </style>
     """,
@@ -257,7 +259,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Display Active Ban / Open Banner
 if is_banned:
     st.error(ban_message)
 else:
@@ -290,9 +291,9 @@ df_chl, data_source = fetch_nasa_chla()
 st.markdown(
     """
     <div class="legend-box">
-        <b>🗺️ Map Guide:</b> &nbsp;&nbsp;
-        🟢 <b>Green Circles</b> = High Chlorophyll-a (Favorable Hilsa Feeding Zone) &nbsp;|&nbsp;
-        🟥 <b>Red Zones</b> = Protected MPA / Sanctuary (Automatically Excluded)
+        <b>🗺️ Map Guide:</b> &nbsp;
+        🟢 <b>Green Circles</b> = High Chlorophyll-a (Favorable Hilsa Zone) &nbsp;|&nbsp;
+        🟥 <b>Red Zones</b> = Protected MPA / Sanctuary (Excluded)
     </div>
     """,
     unsafe_allow_html=True,
@@ -326,7 +327,7 @@ def is_inside_mpa(lat, lon):
     return False
 
 
-# 9. BUILD THE INTERACTIVE MAP
+# 9. BUILD THE INTERACTIVE MAP (Responsive width for mobile & desktop)
 m = folium.Map(location=[21.75, 90.85], zoom_start=8, tiles="OpenStreetMap")
 
 for zone in restricted_zones:
@@ -361,14 +362,14 @@ if not is_banned:
                 ),
             ).add_to(m)
 
-st_folium(m, width=1200, height=520)
+st_folium(m, use_container_width=True, height=430)
 
 # 10. SUMMARY METRICS
 col1, col2, col3 = st.columns(3)
-col1.metric("🟢 Recommended Safe Zones", recommended_count)
-col2.metric("🟥 Protected Zones Masked", len(restricted_zones))
-col3.metric("⚖️ Legal Status", "CLOSED (BAN ACTIVE)" if is_banned else "OPEN")
-st.caption(f"📡 **Satellite Feed:** {data_source} • Total grid points analyzed: {len(df_chl)}")
+col1.metric("🟢 Safe Zones", recommended_count)
+col2.metric("🟥 Masked MPAs", len(restricted_zones))
+col3.metric("⚖️ Status", "CLOSED" if is_banned else "OPEN")
+st.caption(f"📡 **Satellite Feed:** {data_source} • Grid points analyzed: {len(df_chl)}")
 
 st.markdown("---")
 
@@ -410,7 +411,6 @@ with g2:
         unsafe_allow_html=True,
     )
 
-st.write("")
 g3, g4 = st.columns(2)
 with g3:
     st.markdown(
@@ -447,8 +447,8 @@ st.markdown(
     <div class="custom-footer">
         <h4 style="margin:0 0 6px 0; color:#ffffff;">🐟 IlishKhuji — BMU Blue AI Challenge 2026–27</h4>
         <p style="margin:4px 0; font-size:0.95rem;">
-            <b>Created by:</b> Tahsin Mahmud Tamanna &nbsp;|&nbsp;
-            <b> Bangladesh Maritime University
+            <b>Created by:</b> [Your Full Name] &nbsp;|&nbsp;
+            <b>Department / Batch:</b> [Your Dept, Bangladesh Maritime University]
         </p>
         <p style="margin:4px 0; font-size:0.92rem;">
             📞 <b>Phone:</b> +880 1XXX-XXXXXX &nbsp;|&nbsp;
