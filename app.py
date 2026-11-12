@@ -447,8 +447,8 @@ st.markdown(
     <div class="custom-footer">
         <h4 style="margin:0 0 6px 0; color:#ffffff;">🐟 IlishKhuji — BMU Blue AI Challenge 2026–27</h4>
         <p style="margin:4px 0; font-size:0.95rem;">
-            <b>Created by:</b> [Your Full Name] &nbsp;|&nbsp;
-            <b>Department / Batch:</b> [Your Dept, Bangladesh Maritime University]
+            <b>Created by:</b> Tahsin Mahmud Tamanna &nbsp;|&nbsp;
+            <b> Bangladesh Maritime University
         </p>
         <p style="margin:4px 0; font-size:0.92rem;">
             📞 <b>Phone:</b> +880 1XXX-XXXXXX &nbsp;|&nbsp;
